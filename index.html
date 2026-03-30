@@ -77,10 +77,10 @@
             position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
             background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px); border-radius: 20px;
             padding: 12px 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.2); z-index: 90;
-            width: 95%; max-width: 1000px; justify-content: space-between; box-shadow: 0 8px 30px rgba(0,0,0,0.9);
+            width: 95%; max-width: 750px; justify-content: space-between; box-shadow: 0 8px 30px rgba(0,0,0,0.9); padding: 8px 15px;
         }
         .info-toggle { background: transparent; border: none; width: 45px; height: 45px; cursor: pointer; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px; display: flex; align-items: center; justify-content: center; }
-        .info-content { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: 1; justify-content: space-around; }
+        .info-content { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; flex: 1; justify-content: space-around; }
         .info-item { display: flex; flex-direction: column; align-items: center; }
         .info-label { font-size: 0.75rem; color: #aaa; margin-bottom: 4px; font-weight: 500;}
         .info-value { font-size: 0.95rem; font-weight: 800; color: #e0e0e0; letter-spacing: 1px;}
@@ -220,7 +220,7 @@
                 <button class="toggle-btn active" id="orbitBtn" onclick="toggleOrbit()">天体轨道</button>
                 <button class="toggle-btn active" id="labelBtn" onclick="toggleLabels()">行星标签</button>
             </div>
-            <div class="hint-text">💡 拖拽屏幕自由环顾四周</div>
+            <div class="hint-text">💡单击天体可切换跟随逻辑</div>
         </div>
         
         <div id="canvas-container"></div>
@@ -241,7 +241,7 @@
                     <span class="info-value highlight-yellow" id="lunar-date">-</span>
                 </div>
                 <div class="info-item collapsible">
-                    <span class="info-label">精确月相</span>
+                    <span class="info-label">月相</span>
                     <span class="info-value highlight-yellow" id="phase-name">-</span>
                 </div>
                 <div class="info-item collapsible">
@@ -438,7 +438,7 @@
                 this.earth.rotation.y = this.timeProgress * Math.PI * 2;
                 
                 // 【修复1】：强制月球公转周期严格为30天，不再使用 29.53
-                const moonAngle = (this.timeProgress / 30) * Math.PI * 2;
+                const moonAngle = (this.timeProgress / 30) * Math.PI * 2 + earthAngle + Math.PI;
                 this.moon.position.set(Math.cos(moonAngle)*250, 0, -Math.sin(moonAngle)*250);
                 this.moon.rotation.y = moonAngle; 
 
@@ -468,16 +468,16 @@
                 const isWaxing = lunarAge < 15; // 小于15天为渐盈
                 
                 let phaseName = '新月';
-                if (illumination < 0.1) phaseName = '新月';
-                else if (illumination > 0.9) phaseName = '满月';
+                if (illumination < 0.1) phaseName = '🌑新月(朔)';
+                else if (illumination > 0.9) phaseName = '🌕满月(望)';
                 else if (isWaxing) {
-                    if (illumination <= 0.4) phaseName = '上峨眉月';
-                    else if (illumination <= 0.6) phaseName = '上弦月';
-                    else phaseName = '盈凸月';
+                    if (illumination <= 0.4) phaseName = '🌒上峨眉月';
+                    else if (illumination <= 0.6) phaseName = '🌓上弦月';
+                    else phaseName = '🌔盈凸月';
                 } else {
-                    if (illumination >= 0.6) phaseName = '亏凸月';
-                    else if (illumination >= 0.4) phaseName = '下弦月';
-                    else phaseName = '下峨眉月';
+                    if (illumination >= 0.6) phaseName = '🌖亏凸月';
+                    else if (illumination >= 0.4) phaseName = '🌗下弦月';
+                    else phaseName = '🌘下峨眉月(残月)';
                 }
                 document.getElementById('phase-name').textContent = phaseName;
                 
